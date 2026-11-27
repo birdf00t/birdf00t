@@ -2,7 +2,7 @@
 name: 📚 paper study
 about: 논문 공부 및 요약 기록용 템플릿
 title: '논문 제목'
-labels: ''
+labels: 'In progress'
 assignees: ''
 ---
 
