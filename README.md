@@ -6,7 +6,7 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 1 papers`
+`Total Completed: 1 paper`
 
 - ✅ [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
 <!-- END_PAPERS -->
@@ -19,5 +19,6 @@
 
 ### 📌 Issues
 <!-- START_TODO_ISSUES -->
-- 현재 할 일이 없습니다 🎉
+- 📌 **[rPPG-anlasys]** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2)
+- 📌 **[rPPG-anlasys]** [MMPD 사전학습용 실행 파일](https://github.com/birdf00t/rPPG-anlasys/issues/1)
 <!-- END_TODO_ISSUES -->
