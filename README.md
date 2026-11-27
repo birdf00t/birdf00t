@@ -26,6 +26,6 @@
 
 ### 📊 GitHub Activity
 <p>
-  <img src="https://vercel.app" height="150" />
-  <img src="https://vercel.app" height="150" />
+  <img src="generated/overview.svg" height="160" />
+  <img src="generated/languages.svg" height="160" />
 </p>
