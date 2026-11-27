@@ -26,13 +26,12 @@ jobs:
             const username = context.repo.owner;
             const profileRepo = `${username}/${username}`.toLowerCase();
 
-            // 1. GitHub Projects (V2) 보드에서 모든 항목과 Status 가져오기
+            // 1. 개인(user) + 소속 조직(organization)의 모든 Projects V2 보드에서 항목 가져오기
             const query = `
-              query($login: String!) {
-                user(login: $login) {
+              query {
+                viewer {
                   projectsV2(first: 10) {
                     nodes {
-                      title
                       items(first: 100) {
                         nodes {
                           fieldValueByName(name: "Status") {
@@ -50,6 +49,40 @@ jobs:
                                 nameWithOwner
                               }
                             }
+                            ... on DraftIssue {
+                              title
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  organizations(first: 10) {
+                    nodes {
+                      projectsV2(first: 10) {
+                        nodes {
+                          items(first: 100) {
+                            nodes {
+                              fieldValueByName(name: "Status") {
+                                ... on ProjectV2ItemFieldSingleSelectValue {
+                                  name
+                                }
+                              }
+                              content {
+                                ... on Issue {
+                                  title
+                                  url
+                                  state
+                                  repository {
+                                    name
+                                    nameWithOwner
+                                  }
+                                }
+                                ... on DraftIssue {
+                                  title
+                                }
+                              }
+                            }
                           }
                         }
                       }
@@ -59,32 +92,37 @@ jobs:
               }
             `;
 
-            const projectRes = await github.graphql(query, { login: username });
-            const projects = projectRes.user?.projectsV2?.nodes || [];
+            const projectRes = await github.graphql(query);
+            const userProjects = projectRes.viewer?.projectsV2?.nodes || [];
+            const orgProjects = (projectRes.viewer?.organizations?.nodes || [])
+              .flatMap(org => org.projectsV2?.nodes || []);
+            const allProjects = [...userProjects, ...orgProjects];
 
             const targetStatuses = ['in progress', 'todo', 'backlog'];
-            const seenUrls = new Set();
+            const seenKeys = new Set();
             const filteredTodos = [];
 
-            projects.forEach(proj => {
+            allProjects.forEach(proj => {
               const items = proj.items?.nodes || [];
               items.forEach(item => {
-                const issue = item.content;
-                if (!issue || !issue.url || issue.state !== 'OPEN') return;
+                const content = item.content;
+                if (!content || !content.title) return;
 
-                // 프로필 저장소(birdf00t/birdf00t)의 논문 이슈는 제외
-                if (issue.repository?.nameWithOwner?.toLowerCase() === profileRepo) return;
+                if (content.url) {
+                  if (content.state !== 'OPEN') return;
+                  if (content.repository?.nameWithOwner?.toLowerCase() === profileRepo) return;
+                }
 
-                // 중복 제거
-                if (seenUrls.has(issue.url)) return;
+                const uniqueKey = content.url || `draft:${content.title}`;
+                if (seenKeys.has(uniqueKey)) return;
 
                 const statusName = (item.fieldValueByName?.name || '').toLowerCase().trim();
                 if (targetStatuses.includes(statusName)) {
-                  seenUrls.add(issue.url);
+                  seenKeys.add(uniqueKey);
                   filteredTodos.push({
-                    title: issue.title,
-                    url: issue.url,
-                    repoName: issue.repository.name,
+                    title: content.title,
+                    url: content.url || '',
+                    repoName: content.repository?.name || 'Draft',
                     status: statusName
                   });
                 }
@@ -107,7 +145,8 @@ jobs:
                 if (task.status === 'in progress') badge = '🚧';
                 else if (task.status === 'todo') badge = '📝';
 
-                return `- ${badge} **[${task.repoName}]** [${task.title}](${task.url})`;
+                const linkText = task.url ? `[${task.title}](${task.url})` : task.title;
+                return `- ${badge} **[${task.repoName}]** ${linkText}`;
               }).join('\n');
             }
 
