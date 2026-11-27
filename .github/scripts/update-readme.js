@@ -5,26 +5,25 @@ module.exports = async ({ github, context }) => {
   const username = context.repo.owner;
   const profileRepo = (username + '/' + username).toLowerCase();
 
-  // 1. GraphQL로 개인 Projects V2 상태 조회 (read:org 없이 project + repo 권한만으로 작동)
-  const graphqlQuery = [
-    'query {',
-    '  viewer {',
-    '    projectsV2(first: 10) {',
+  // 1. 내 계정이 접근 가능한 모든 저장소 목록 가져오기
+  const { data: repos } = await github.rest.repos.listForAuthenticatedUser({
+    per_page: 100,
+    sort: 'updated'
+  });
+
+  // 알려주신 GraphQL 쿼리: 저장소별 OPEN 이슈와 연결된 Projects의 Status 조회
+  const repoIssuesQuery = [
+    'query($owner: String!, $repo: String!) {',
+    '  repository(owner: $owner, name: $repo) {',
+    '    issues(first: 50, states: OPEN, orderBy: {field: UPDATED_AT, direction: DESC}) {',
     '      nodes {',
-    '        items(first: 100) {',
+    '        title',
+    '        url',
+    '        labels(first: 10) { nodes { name } }',
+    '        projectItems(first: 5) {',
     '          nodes {',
-    '            fieldValues(first: 20) {',
-    '              nodes {',
-    '                ... on ProjectV2ItemFieldSingleSelectValue { name }',
-    '                ... on ProjectV2ItemFieldTextValue { text }',
-    '              }',
-    '            }',
-    '            content {',
-    '              ... on Issue {',
-    '                title url state',
-    '                repository { name nameWithOwner }',
-    '              }',
-    '              ... on DraftIssue { title }',
+    '            fieldValueByName(name: "Status") {',
+    '              ... on ProjectV2ItemFieldSingleSelectValue { name }',
     '            }',
     '          }',
     '        }',
@@ -34,89 +33,48 @@ module.exports = async ({ github, context }) => {
     '}'
   ].join('\n');
 
-  const statusMap = new Map();
-  const draftTodos = [];
+  const allTodos = [];
 
-  try {
-    const gqlRes = await github.graphql(graphqlQuery);
-    const allProjects = gqlRes.viewer?.projectsV2?.nodes || [];
+  for (const repo of repos) {
+    if (repo.full_name.toLowerCase() === profileRepo) continue;
 
-    allProjects.forEach(proj => {
-      (proj.items?.nodes || []).forEach(item => {
-        const content = item.content;
-        if (!content || !content.title) return;
-
-        let mappedStatus = '';
-        const fields = item.fieldValues?.nodes || [];
-        for (const f of fields) {
-          const val = (f?.name || f?.text || '').toLowerCase().trim();
-          if (!val) continue;
-          if (val.includes('review') || val.includes('done') || val.includes('완료')) {
-            mappedStatus = 'excluded';
-            break;
-          }
-          if (val.includes('in progress') || val.includes('inprogress') || val.includes('진행')) {
-            mappedStatus = 'in progress';
-            break;
-          }
-          if (val.includes('todo') || val.includes('to do') || val.includes('할 일')) {
-            mappedStatus = 'todo';
-            break;
-          }
-          if (val.includes('backlog') || val.includes('백로그')) {
-            mappedStatus = 'backlog';
-            break;
-          }
-        }
-
-        if (content.url) {
-          if (mappedStatus) statusMap.set(content.url, mappedStatus);
-        } else if (mappedStatus && mappedStatus !== 'excluded') {
-          draftTodos.push({
-            title: content.title,
-            url: '',
-            repoName: 'Project',
-            status: mappedStatus
-          });
-        }
+    try {
+      const res = await github.graphql(repoIssuesQuery, {
+        owner: repo.owner.login,
+        repo: repo.name
       });
-    });
-  } catch (e) {
-    console.log('GraphQL 조회 에러:', e.message);
-  }
 
-  // 2. 일반 저장소 Open 이슈 검색 후 Projects 상태 결합
-  const { data: searchRes } = await github.rest.search.issuesAndPullRequests({
-    q: 'author:' + username + ' is:issue is:open',
-    sort: 'updated',
-    order: 'desc',
-    per_page: 50
-  });
+      const issues = res.repository?.issues?.nodes || [];
+      for (const issue of issues) {
+        const labelNames = (issue.labels?.nodes || []).map(l => l.name.toLowerCase().trim());
+        if (labelNames.includes('review') || labelNames.includes('done')) continue;
 
-  const combinedTodos = [...draftTodos];
+        const projectItem = issue.projectItems?.nodes?.at(0);
+        const rawStatus = (projectItem?.fieldValueByName?.name || '').toLowerCase().trim();
 
-  for (const issue of searchRes.items) {
-    const repoFullName = issue.repository_url.split('/repos/').pop().toLowerCase();
-    if (repoFullName === profileRepo) continue;
+        let status = '';
+        if (rawStatus.includes('review') || rawStatus.includes('done')) continue;
+        else if (rawStatus.includes('in progress') || rawStatus.includes('inprogress')) status = 'in progress';
+        else if (rawStatus.includes('todo') || rawStatus.includes('to do')) status = 'todo';
+        else if (rawStatus.includes('backlog')) status = 'backlog';
 
-    const labelNames = issue.labels.map(l => l.name.toLowerCase().trim());
-    if (labelNames.includes('review') || labelNames.includes('done')) continue;
+        // Projects Status가 없으면 라벨에서 보조 확인
+        if (!status) {
+          if (labelNames.some(n => n.includes('in progress') || n.includes('inprogress'))) status = 'in progress';
+          else if (labelNames.some(n => n.includes('todo') || n.includes('to do'))) status = 'todo';
+          else if (labelNames.some(n => n.includes('backlog'))) status = 'backlog';
+        }
 
-    let status = statusMap.get(issue.html_url) || '';
-    if (!status) {
-      if (labelNames.some(n => n.includes('in progress') || n.includes('inprogress'))) status = 'in progress';
-      else if (labelNames.some(n => n.includes('todo') || n.includes('to do'))) status = 'todo';
-      else if (labelNames.some(n => n.includes('backlog'))) status = 'backlog';
+        allTodos.push({
+          title: issue.title,
+          url: issue.url,
+          repoName: repo.name,
+          status
+        });
+      }
+    } catch (e) {
+      // 이슈가 비활성화된 저장소 등은 건너뜀
     }
-
-    if (status === 'excluded') continue;
-
-    combinedTodos.push({
-      title: issue.title,
-      url: issue.html_url,
-      repoName: issue.repository_url.split('/').pop(),
-      status
-    });
   }
 
   const getPriority = (status) => {
@@ -127,22 +85,21 @@ module.exports = async ({ github, context }) => {
   };
 
   let todoList = '';
-  if (combinedTodos.length === 0) {
+  if (allTodos.length === 0) {
     todoList = '- No open tasks 🎉';
   } else {
-    const sorted = combinedTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
+    const sorted = allTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
     todoList = sorted.map(task => {
       let badge = '📌';
       if (task.status === 'in progress') badge = '🚧';
       else if (task.status === 'todo') badge = '📝';
       else if (task.status === 'backlog') badge = '📦';
 
-      const linkText = task.url ? '[' + task.title + '](' + task.url + ')' : task.title;
-      return '- ' + badge + ' **[' + task.repoName + ']** ' + linkText;
+      return '- ' + badge + ' **[' + task.repoName + ']** [' + task.title + '](' + task.url + ')';
     }).join('\n');
   }
 
-  // 3. 프로필 저장소 논문 목록 & 키워드 집계
+  // 2. 프로필 저장소(birdf00t/birdf00t) 논문 목록 & 키워드 집계
   const { data: paperIssues } = await github.rest.issues.listForRepo({
     owner: username,
     repo: username,
@@ -213,7 +170,7 @@ module.exports = async ({ github, context }) => {
     paperList = summaryLine + '\n' + itemsText;
   }
 
-  // 4. README.md 업데이트
+  // 3. README.md 업데이트
   let readme = fs.readFileSync('README.md', 'utf8');
   readme = readme.replace(
     /<!-- START_KEYWORDS -->[\s\S]*<!-- END_KEYWORDS -->/,
