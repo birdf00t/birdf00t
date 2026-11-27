@@ -5,151 +5,31 @@ module.exports = async ({ github, context }) => {
   const username = context.repo.owner;
   const profileRepo = (username + '/' + username).toLowerCase();
 
-  // 1. 내 계정의 통합 Projects V2 보드(첫 번째 보드 ID 및 기존 항목) 조회
-  const projectQuery = [
-    'query {',
-    '  viewer {',
-    '    projectsV2(first: 10) {',
-    '      nodes {',
-    '        id',
-    '        title',
-    '        items(first: 100) {',
-    '          nodes {',
-    '            fieldValues(first: 20) {',
-    '              nodes {',
-    '                ... on ProjectV2ItemFieldSingleSelectValue { name }',
-    '                ... on ProjectV2ItemFieldTextValue { text }',
-    '              }',
-    '            }',
-    '            content {',
-    '              ... on Issue {',
-    '                title url state',
-    '                repository { name nameWithOwner }',
-    '              }',
-    '              ... on DraftIssue {',
-    '                title',
-    '              }',
-    '            }',
-    '          }',
-    '        }',
-    '      }',
-    '    }',
-    '  }',
-    '}'
-  ].join('\n');
-
-  const boardTasks = [];
-  const boardUrlSet = new Set();
-  let defaultProjectId = null;
-
-  try {
-    const res = await github.graphql(projectQuery);
-    const projects = res.viewer?.projectsV2?.nodes || [];
-    if (projects.length > 0) {
-      defaultProjectId = projects.at(0).id;
-    }
-
-    for (const proj of projects) {
-      const items = proj.items?.nodes || [];
-      for (const item of items) {
-        const content = item.content;
-        if (!content || !content.title) continue;
-
-        if (content.url) {
-          boardUrlSet.add(content.url);
-          if (content.state !== 'OPEN') continue;
-          if (content.repository?.nameWithOwner?.toLowerCase() === profileRepo) continue;
-        }
-
-        let rawStatus = '';
-        for (const f of (item.fieldValues?.nodes || [])) {
-          const val = (f?.name || f?.text || '').trim();
-          if (val && val !== content.title) {
-            rawStatus = val;
-            break;
-          }
-        }
-
-        const lower = rawStatus.toLowerCase();
-        if (lower.includes('done') || lower.includes('review')) continue;
-
-        let badge = '📌';
-        let priority = 4;
-        if (lower.includes('in progress') || lower.includes('inprogress')) {
-          badge = '🚧';
-          priority = 1;
-        } else if (lower.includes('todo') || lower.includes('to do')) {
-          badge = '📝';
-          priority = 2;
-        } else if (lower.includes('backlog')) {
-          badge = '📦';
-          priority = 3;
-        }
-
-        boardTasks.push({
-          badge,
-          priority,
-          repoName: content.repository?.name || proj.title || 'Project',
-          title: content.title,
-          url: content.url || ''
-        });
-      }
-    }
-  } catch (e) {
-    console.log('Projects 조회 에러:', e.message);
-  }
-
-  // 1-2. 모든 공개 저장소 Open 이슈 검색 -> 보드에 없으면 자동으로 첫 번째 보드에 추가
+  // 1. 내 공개 레포의 열린(Open) 이슈 가져오기 (앞 이모티콘 제거)
   const { data: searchRes } = await github.rest.search.issuesAndPullRequests({
-    q: 'involves:' + username + ' is:issue is:open is:public',
+    q: 'user:' + username + ' is:issue is:open is:public',
     sort: 'updated',
     order: 'desc',
     per_page: 50
   });
 
-  const addMutation = [
-    'mutation($projectId: ID!, $contentId: ID!) {',
-    '  addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {',
-    '    item { id }',
-    '  }',
-    '}'
-  ].join('\n');
-
-  for (const issue of searchRes.items) {
-    const repoFullName = issue.repository_url.split('/repos/').pop().toLowerCase();
-    if (repoFullName === profileRepo) continue;
-    if (boardUrlSet.has(issue.html_url)) continue;
-
-    // 통합 보드가 존재하면 보드에 자동 등록
-    if (defaultProjectId && issue.node_id) {
-      try {
-        await github.graphql(addMutation, {
-          projectId: defaultProjectId,
-          contentId: issue.node_id
-        });
-      } catch (e) {
-        console.log('보드 자동 추가 참고:', e.message);
-      }
-    }
-
-    boardTasks.push({
-      badge: '📦',
-      priority: 3,
+  const todos = searchRes.items
+    .filter(issue => {
+      const repoFullName = issue.repository_url.split('/repos/').pop().toLowerCase();
+      return repoFullName !== profileRepo;
+    })
+    .map(issue => ({
       repoName: issue.repository_url.split('/').pop(),
       title: issue.title,
       url: issue.html_url
-    });
-  }
-
-  boardTasks.sort((a, b) => a.priority - b.priority);
+    }));
 
   let todoList = '';
-  if (boardTasks.length === 0) {
+  if (todos.length === 0) {
     todoList = '- No open tasks 🎉';
   } else {
-    todoList = boardTasks.map(t => {
-      const linkText = t.url ? '[' + t.title + '](' + t.url + ')' : t.title;
-      return '- ' + t.badge + ' **[' + t.repoName + ']** ' + linkText;
+    todoList = todos.map(t => {
+      return '- **[' + t.repoName + ']** [' + t.title + '](' + t.url + ')';
     }).join('\n');
   }
 
