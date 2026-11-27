@@ -17,38 +17,83 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch tasks, papers, and keywords, then update README
+      - name: Fetch Projects tasks, papers, and keywords, then update README
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
           script: |
             const fs = require('fs');
             const username = context.repo.owner;
             const profileRepo = `${username}/${username}`.toLowerCase();
 
-            // 1. 일반 저장소 할 일(To-Do) 검색: In progress, Todo, Backlog 라벨만 포함 (나머지 제외)
-            const { data: openData } = await github.rest.search.issuesAndPullRequests({
-              q: `user:${username} is:issue is:open is:public`,
-              sort: 'updated',
-              order: 'desc',
-              per_page: 100
+            // 1. GitHub Projects (V2) 보드에서 모든 항목과 Status 가져오기
+            const query = `
+              query($login: String!) {
+                user(login: $login) {
+                  projectsV2(first: 10) {
+                    nodes {
+                      title
+                      items(first: 100) {
+                        nodes {
+                          fieldValueByName(name: "Status") {
+                            ... on ProjectV2ItemFieldSingleSelectValue {
+                              name
+                            }
+                          }
+                          content {
+                            ... on Issue {
+                              title
+                              url
+                              state
+                              repository {
+                                name
+                                nameWithOwner
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+
+            const projectRes = await github.graphql(query, { login: username });
+            const projects = projectRes.user?.projectsV2?.nodes || [];
+
+            const targetStatuses = ['in progress', 'todo', 'backlog'];
+            const seenUrls = new Set();
+            const filteredTodos = [];
+
+            projects.forEach(proj => {
+              const items = proj.items?.nodes || [];
+              items.forEach(item => {
+                const issue = item.content;
+                if (!issue || !issue.url || issue.state !== 'OPEN') return;
+
+                // 프로필 저장소(birdf00t/birdf00t)의 논문 이슈는 제외
+                if (issue.repository?.nameWithOwner?.toLowerCase() === profileRepo) return;
+
+                // 중복 제거
+                if (seenUrls.has(issue.url)) return;
+
+                const statusName = (item.fieldValueByName?.name || '').toLowerCase().trim();
+                if (targetStatuses.includes(statusName)) {
+                  seenUrls.add(issue.url);
+                  filteredTodos.push({
+                    title: issue.title,
+                    url: issue.url,
+                    repoName: issue.repository.name,
+                    status: statusName
+                  });
+                }
+              });
             });
 
-            const targetLabels = ['in progress', 'todo', 'backlog'];
-            const filteredTodos = openData.items.filter(issue => {
-              const repoFullName = issue.repository_url.split('/repos/').pop().toLowerCase();
-              if (repoFullName === profileRepo) return false;
-
-              const names = issue.labels.map(l => l.name.toLowerCase().trim());
-              const hasTarget = names.some(n => targetLabels.includes(n));
-              const hasExcluded = names.includes('review') || names.includes('done');
-              return hasTarget && !hasExcluded;
-            });
-
-            const getPriority = (issue) => {
-              const names = issue.labels.map(l => l.name.toLowerCase().trim());
-              if (names.includes('in progress')) return 1;
-              if (names.includes('todo')) return 2;
+            const getPriority = (status) => {
+              if (status === 'in progress') return 1;
+              if (status === 'todo') return 2;
               return 3;
             };
 
@@ -56,16 +101,13 @@ jobs:
             if (filteredTodos.length === 0) {
               todoList = '- 현재 할 일이 없습니다 🎉';
             } else {
-              const sorted = filteredTodos.sort((a, b) => getPriority(a) - getPriority(b));
-              todoList = sorted.map(issue => {
-                const repoName = issue.repository_url.split('/').pop();
-                const labelNames = issue.labels.map(l => l.name.toLowerCase().trim());
+              const sorted = filteredTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
+              todoList = sorted.map(task => {
+                let badge = '📦';
+                if (task.status === 'in progress') badge = '🚧';
+                else if (task.status === 'todo') badge = '📝';
 
-                let statusBadge = '📦';
-                if (labelNames.includes('in progress')) statusBadge = '🚧';
-                else if (labelNames.includes('todo')) statusBadge = '📝';
-
-                return `- ${statusBadge} **[${repoName}]** [${issue.title}](${issue.html_url})`;
+                return `- ${badge} **[${task.repoName}]** [${task.title}](${task.url})`;
               }).join('\n');
             }
 
@@ -85,7 +127,7 @@ jobs:
               return !names.includes('backlog');
             });
 
-            // 2-1. 본문에서 Keywords 추출 및 상위 10개 정렬 (이모티콘만 표시)
+            // 2-1. 본문에서 Keywords 추출 및 상위 10개 정렬
             const keywordCounts = {};
             activePapers.forEach(issue => {
               if (!issue.body) return;
@@ -111,7 +153,7 @@ jobs:
               ? `- 🏷️ ${topKeywords.join(', ')}`
               : `- 🏷️ 아직 등록된 키워드가 없습니다`;
 
-            // 2-2. 완료 / 읽는 중 카운트 및 목록 생성 (이모티콘만 표시)
+            // 2-2. 완료 / 읽는 중 카운트 및 목록 생성
             const isPaperDone = (issue) => {
               const names = issue.labels.map(l => l.name.toLowerCase().trim());
               return issue.state === 'closed' || names.includes('done');
