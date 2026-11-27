@@ -5,12 +5,13 @@ module.exports = async ({ github, context }) => {
   const username = context.repo.owner;
   const profileRepo = (username + '/' + username).toLowerCase();
 
-  // 1. 내 계정의 Projects V2 보드에서 Issue + DraftIssue 모든 항목과 Status 가져오기
+  // 1. 내 계정의 통합 Projects V2 보드(첫 번째 보드 ID 및 기존 항목) 조회
   const projectQuery = [
     'query {',
     '  viewer {',
     '    projectsV2(first: 10) {',
     '      nodes {',
+    '        id',
     '        title',
     '        items(first: 100) {',
     '          nodes {',
@@ -39,10 +40,14 @@ module.exports = async ({ github, context }) => {
 
   const boardTasks = [];
   const boardUrlSet = new Set();
+  let defaultProjectId = null;
 
   try {
     const res = await github.graphql(projectQuery);
     const projects = res.viewer?.projectsV2?.nodes || [];
+    if (projects.length > 0) {
+      defaultProjectId = projects.at(0).id;
+    }
 
     for (const proj of projects) {
       const items = proj.items?.nodes || [];
@@ -50,13 +55,12 @@ module.exports = async ({ github, context }) => {
         const content = item.content;
         if (!content || !content.title) continue;
 
-        // 닫힌 이슈나 프로필 저장소 논문 이슈 제외
         if (content.url) {
+          boardUrlSet.add(content.url);
           if (content.state !== 'OPEN') continue;
           if (content.repository?.nameWithOwner?.toLowerCase() === profileRepo) continue;
         }
 
-        // 모든 필드에서 Status 값 찾기
         let rawStatus = '';
         for (const f of (item.fieldValues?.nodes || [])) {
           const val = (f?.name || f?.text || '').trim();
@@ -82,8 +86,6 @@ module.exports = async ({ github, context }) => {
           priority = 3;
         }
 
-        if (content.url) boardUrlSet.add(content.url);
-
         boardTasks.push({
           badge,
           priority,
@@ -97,7 +99,7 @@ module.exports = async ({ github, context }) => {
     console.log('Projects 조회 에러:', e.message);
   }
 
-  // 1-2. ://github.com 화면처럼 나와 관련된 모든 공개 저장소 Open 이슈 함께 포함
+  // 1-2. 모든 공개 저장소 Open 이슈 검색 -> 보드에 없으면 자동으로 첫 번째 보드에 추가
   const { data: searchRes } = await github.rest.search.issuesAndPullRequests({
     q: 'involves:' + username + ' is:issue is:open is:public',
     sort: 'updated',
@@ -105,14 +107,34 @@ module.exports = async ({ github, context }) => {
     per_page: 50
   });
 
+  const addMutation = [
+    'mutation($projectId: ID!, $contentId: ID!) {',
+    '  addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {',
+    '    item { id }',
+    '  }',
+    '}'
+  ].join('\n');
+
   for (const issue of searchRes.items) {
     const repoFullName = issue.repository_url.split('/repos/').pop().toLowerCase();
     if (repoFullName === profileRepo) continue;
     if (boardUrlSet.has(issue.html_url)) continue;
 
+    // 통합 보드가 존재하면 보드에 자동 등록
+    if (defaultProjectId && issue.node_id) {
+      try {
+        await github.graphql(addMutation, {
+          projectId: defaultProjectId,
+          contentId: issue.node_id
+        });
+      } catch (e) {
+        console.log('보드 자동 추가 참고:', e.message);
+      }
+    }
+
     boardTasks.push({
-      badge: '📌',
-      priority: 4,
+      badge: '📦',
+      priority: 3,
       repoName: issue.repository_url.split('/').pop(),
       title: issue.title,
       url: issue.html_url
