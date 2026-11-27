@@ -24,21 +24,46 @@ jobs:
             const fs = require('fs');
             const username = context.repo.owner;
 
-            // 본인 소유의 모든 Public 저장소에서 Open 상태인 이슈 검색 (PR 제외)
+            // in progress, todo, backlog 라벨이 붙은 Public Open 이슈만 검색
             const { data } = await github.rest.search.issuesAndPullRequests({
-              q: `user:${username} is:issue is:open is:public`,
+              q: `user:${username} is:issue is:open is:public label:"in progress",todo,backlog`,
               sort: 'updated',
               order: 'desc',
-              per_page: 20
+              per_page: 30
             });
 
+            // review나 done 라벨이 함께 붙어 있는 경우 한 번 더 제외
+            const filtered = data.items.filter(issue => {
+              const names = issue.labels.map(l => l.name.toLowerCase());
+              return !names.includes('review') && !names.includes('done');
+            });
+
+            // 정렬 순서: In Progress(1) -> To-Do(2) -> Backlog(3)
+            const getPriority = (issue) => {
+              const names = issue.labels.map(l => l.name.toLowerCase());
+              if (names.includes('in progress')) return 1;
+              if (names.includes('todo')) return 2;
+              return 3;
+            };
+
             let list = '';
-            if (data.items.length === 0) {
-              list = '- 현재 열려 있는 이슈가 없습니다 🎉';
+            if (filtered.length === 0) {
+              list = '- 현재 할 일이 없습니다 🎉';
             } else {
-              list = data.items.map(issue => {
+              const sorted = filtered.sort((a, b) => getPriority(a) - getPriority(b));
+
+              list = sorted.map(issue => {
                 const repoName = issue.repository_url.split('/').pop();
-                return `- [ ] **[${repoName}]** [${issue.title}](${issue.html_url})`;
+                const labelNames = issue.labels.map(l => l.name.toLowerCase());
+
+                let statusBadge = '📦 `[Backlog]`';
+                if (labelNames.includes('in progress')) {
+                  statusBadge = '🚧 `[In Progress]`';
+                } else if (labelNames.includes('todo')) {
+                  statusBadge = '📝 `[To-Do]`';
+                }
+
+                return `- [ ] ${statusBadge} **[${repoName}]** [${issue.title}](${issue.html_url})`;
               }).join('\n');
             }
 
