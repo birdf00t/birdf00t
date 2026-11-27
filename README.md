@@ -19,8 +19,6 @@
 
 ### 📌 Issues
 <!-- START_TODO_ISSUES -->
-```json
-GraphQL Error: Request failed due to following response errors:
- - Your token has not been granted the required scopes to execute this query. The 'login' field requires one of the following scopes: ['read:org'], but your token has only been granted the: ['project', 'repo'] scopes. Please modify your token's scopes at: https://github.com/settings/tokens.
-```
+- 📌 **[rPPG-anlasys]** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2)
+- 📌 **[rPPG-anlasys]** [MMPD 사전학습용 실행 파일](https://github.com/birdf00t/rPPG-anlasys/issues/1)
 <!-- END_TODO_ISSUES -->
