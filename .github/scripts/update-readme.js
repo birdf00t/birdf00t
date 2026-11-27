@@ -5,25 +5,30 @@ module.exports = async ({ github, context }) => {
   const username = context.repo.owner;
   const profileRepo = (username + '/' + username).toLowerCase();
 
-  // 1. 내 계정이 접근 가능한 모든 저장소 목록 가져오기
+  // 1. 접근 가능한 모든 저장소에서 보내주신 GraphQL 쿼리 그대로 실행
   const { data: repos } = await github.rest.repos.listForAuthenticatedUser({
     per_page: 100,
     sort: 'updated'
   });
 
-  // 알려주신 GraphQL 쿼리: 저장소별 OPEN 이슈와 연결된 Projects의 Status 조회
-  const repoIssuesQuery = [
+  const query = [
     'query($owner: String!, $repo: String!) {',
     '  repository(owner: $owner, name: $repo) {',
-    '    issues(first: 50, states: OPEN, orderBy: {field: UPDATED_AT, direction: DESC}) {',
+    '    issues(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {',
     '      nodes {',
+    '        number',
     '        title',
+    '        state',
     '        url',
-    '        labels(first: 10) { nodes { name } }',
     '        projectItems(first: 5) {',
     '          nodes {',
+    '            project {',
+    '              title',
+    '            }',
     '            fieldValueByName(name: "Status") {',
-    '              ... on ProjectV2ItemFieldSingleSelectValue { name }',
+    '              ... on ProjectV2ItemFieldSingleSelectValue {',
+    '                name',
+    '              }',
     '            }',
     '          }',
     '        }',
@@ -33,69 +38,45 @@ module.exports = async ({ github, context }) => {
     '}'
   ].join('\n');
 
-  const allTodos = [];
+  let allIssues = [];
 
   for (const repo of repos) {
     if (repo.full_name.toLowerCase() === profileRepo) continue;
 
     try {
-      const res = await github.graphql(repoIssuesQuery, {
+      const result = await github.graphql(query, {
         owner: repo.owner.login,
         repo: repo.name
       });
 
-      const issues = res.repository?.issues?.nodes || [];
-      for (const issue of issues) {
-        const labelNames = (issue.labels?.nodes || []).map(l => l.name.toLowerCase().trim());
-        if (labelNames.includes('review') || labelNames.includes('done')) continue;
-
+      const nodes = result.repository?.issues?.nodes || [];
+      const formatted = nodes.map((issue) => {
         const projectItem = issue.projectItems?.nodes?.at(0);
-        const rawStatus = (projectItem?.fieldValueByName?.name || '').toLowerCase().trim();
+        const status = projectItem?.fieldValueByName?.name || '상태 없음';
 
-        let status = '';
-        if (rawStatus.includes('review') || rawStatus.includes('done')) continue;
-        else if (rawStatus.includes('in progress') || rawStatus.includes('inprogress')) status = 'in progress';
-        else if (rawStatus.includes('todo') || rawStatus.includes('to do')) status = 'todo';
-        else if (rawStatus.includes('backlog')) status = 'backlog';
-
-        // Projects Status가 없으면 라벨에서 보조 확인
-        if (!status) {
-          if (labelNames.some(n => n.includes('in progress') || n.includes('inprogress'))) status = 'in progress';
-          else if (labelNames.some(n => n.includes('todo') || n.includes('to do'))) status = 'todo';
-          else if (labelNames.some(n => n.includes('backlog'))) status = 'backlog';
-        }
-
-        allTodos.push({
+        return {
+          repo: repo.name,
+          number: issue.number,
           title: issue.title,
-          url: issue.url,
-          repoName: repo.name,
-          status
-        });
-      }
+          state: issue.state,
+          status: status,
+          url: issue.url
+        };
+      });
+
+      allIssues = allIssues.concat(formatted);
     } catch (e) {
-      // 이슈가 비활성화된 저장소 등은 건너뜀
+      // 이슈 조회 불가 저장소 건너뜀
     }
   }
 
-  const getPriority = (status) => {
-    if (status === 'in progress') return 1;
-    if (status === 'todo') return 2;
-    if (status === 'backlog') return 3;
-    return 4;
-  };
-
+  // API에서 가져온 값 그대로 README.md에 프린트
   let todoList = '';
-  if (allTodos.length === 0) {
-    todoList = '- No open tasks 🎉';
+  if (allIssues.length === 0) {
+    todoList = '- 가져온 이슈가 없습니다.';
   } else {
-    const sorted = allTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
-    todoList = sorted.map(task => {
-      let badge = '📌';
-      if (task.status === 'in progress') badge = '🚧';
-      else if (task.status === 'todo') badge = '📝';
-      else if (task.status === 'backlog') badge = '📦';
-
-      return '- ' + badge + ' **[' + task.repoName + ']** [' + task.title + '](' + task.url + ')';
+    todoList = allIssues.map(item => {
+      return '- **[' + item.repo + ' #' + item.number + ']** [' + item.title + '](' + item.url + ') | state: `' + item.state + '` | status: `' + item.status + '`';
     }).join('\n');
   }
 
