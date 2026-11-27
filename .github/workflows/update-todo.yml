@@ -25,7 +25,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch tasks, papers, and keywords, then update README
+      - name: Inspect raw issue and project fields
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.PROJECT_TOKEN }}
@@ -34,49 +34,52 @@ jobs:
             const username = context.repo.owner;
             const profileRepo = `${username}/${username}`.toLowerCase();
 
-            // 1. birdf00t 계정이 작성한 모든 Open 이슈 검색
+            // 1. birdf00t 계정의 모든 Open 이슈 검색
             const { data: searchRes } = await github.rest.search.issuesAndPullRequests({
               q: `author:${username} is:issue is:open`,
               sort: 'updated',
               order: 'desc',
-              per_page: 50
+              per_page: 20
             });
 
             const rawTodos = searchRes.items.filter(issue => {
               const repoFullName = issue.repository_url.split('/repos/').pop().toLowerCase();
-              if (repoFullName === profileRepo) return false;
-
-              const names = issue.labels.map(l => l.name.toLowerCase().trim());
-              if (names.includes('review') || names.includes('done')) return false;
-
-              return true;
+              return repoFullName !== profileRepo;
             });
 
-            // 1-1. 각 이슈의 Labels 또는 연결된 GitHub Projects의 모든 필드에서 상태 조회
-            const enrichedTodos = [];
-            for (const issue of rawTodos) {
-              const repoName = issue.repository_url.split('/').pop();
-              const labelNames = issue.labels.map(l => l.name.toLowerCase().trim());
-              let status = '';
+            let todoList = '';
+            if (rawTodos.length === 0) {
+              todoList = '- No open tasks 🎉';
+            } else {
+              const lines = [];
+              for (const issue of rawTodos) {
+                const repoName = issue.repository_url.split('/').pop();
+                const labels = issue.labels.map(l => l.name).join(', ') || '없음';
+                const milestone = issue.milestone?.title || '없음';
+                const issueType = issue.type?.name || '없음';
+                let projectRaw = '조회안됨';
 
-              // 먼저 이슈 라벨에서 상태 확인
-              if (labelNames.some(n => n.includes('in progress') || n.includes('inprogress'))) status = 'in progress';
-              else if (labelNames.some(n => n.includes('todo') || n.includes('to do'))) status = 'todo';
-              else if (labelNames.some(n => n.includes('backlog'))) status = 'backlog';
-
-              // 라벨에 없으면 연결된 GitHub Projects 보드의 모든 선택(SingleSelect) 필드에서 상태 조회
-              if (!status && issue.node_id) {
-                try {
-                  const nodeRes = await github.graphql(`
-                    query($id: ID!) {
-                      node(id: $id) {
-                        ... on Issue {
-                          projectItems(first: 5) {
-                            nodes {
-                              fieldValues(first: 10) {
-                                nodes {
-                                  ... on ProjectV2ItemFieldSingleSelectValue {
-                                    name
+                if (issue.node_id) {
+                  try {
+                    const nodeRes = await github.graphql(`
+                      query($id: ID!) {
+                        node(id: $id) {
+                          ... on Issue {
+                            projectItems(first: 5) {
+                              nodes {
+                                project {
+                                  title
+                                }
+                                fieldValues(first: 20) {
+                                  nodes {
+                                    ... on ProjectV2ItemFieldSingleSelectValue {
+                                      name
+                                      field { ... on ProjectV2SingleSelectField { name } }
+                                    }
+                                    ... on ProjectV2ItemFieldTextValue {
+                                      text
+                                      field { ... on ProjectV2Field { name } }
+                                    }
                                   }
                                 }
                               }
@@ -84,71 +87,29 @@ jobs:
                           }
                         }
                       }
-                    }
-                  `, { id: issue.node_id });
+                    `, { id: issue.node_id });
 
-                  const items = nodeRes.node?.projectItems?.nodes || [];
-                  for (const item of items) {
-                    const fields = item.fieldValues?.nodes || [];
-                    for (const f of fields) {
-                      const pStatus = (f?.name || '').toLowerCase();
-                      if (!pStatus) continue;
-
-                      if (pStatus.includes('review') || pStatus.includes('done') || pStatus.includes('완료')) {
-                        status = 'excluded';
-                        break;
-                      }
-                      if (pStatus.includes('in progress') || pStatus.includes('inprogress') || pStatus.includes('진행')) {
-                        status = 'in progress';
-                        break;
-                      }
-                      if (pStatus.includes('todo') || pStatus.includes('to do') || pStatus.includes('할 일')) {
-                        status = 'todo';
-                        break;
-                      }
-                      if (pStatus.includes('backlog') || pStatus.includes('백로그')) {
-                        status = 'backlog';
-                        break;
-                      }
+                    const items = nodeRes.node?.projectItems?.nodes || [];
+                    if (items.length === 0) {
+                      projectRaw = '연결된 프로젝트 0개';
+                    } else {
+                      projectRaw = items.map(it => {
+                        const pTitle = it.project?.title || '무제';
+                        const vals = (it.fieldValues?.nodes || [])
+                          .filter(f => f && (f.name || f.text))
+                          .map(f => `${f.field?.name || '?'}=${f.name || f.text}`)
+                          .join(' | ');
+                        return `[${pTitle}: ${vals || '값없음'}]`;
+                      }).join(' / ');
                     }
-                    if (status) break;
+                  } catch (e) {
+                    projectRaw = `에러(${e.message})`;
                   }
-                } catch (e) {
-                  console.log('Projects 조회 에러:', e.message);
                 }
+
+                lines.push(`- 📌 **[${repoName}]** [${issue.title}](${issue.html_url})\n  - \`Labels: ${labels}\` / \`Milestone: ${milestone}\` / \`Type: ${issueType}\` / \`Projects: ${projectRaw}\``);
               }
-
-              // Projects 보드에서 Review나 Done 컬럼에 있는 이슈는 제외
-              if (status === 'excluded') continue;
-
-              enrichedTodos.push({
-                title: issue.title,
-                url: issue.html_url,
-                repoName,
-                status
-              });
-            }
-
-            const getPriority = (status) => {
-              if (status === 'in progress') return 1;
-              if (status === 'todo') return 2;
-              if (status === 'backlog') return 3;
-              return 4;
-            };
-
-            let todoList = '';
-            if (enrichedTodos.length === 0) {
-              todoList = '- No open tasks 🎉';
-            } else {
-              const sorted = enrichedTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
-              todoList = sorted.map(task => {
-                let badge = '📌';
-                if (task.status === 'in progress') badge = '🚧';
-                else if (task.status === 'todo') badge = '📝';
-                else if (task.status === 'backlog') badge = '📦';
-
-                return `- ${badge} **[${task.repoName}]** [${task.title}](${task.url})`;
-              }).join('\n');
+              todoList = lines.join('\n');
             }
 
             // 2. 프로필 저장소(birdf00t/birdf00t) 논문 목록 & 키워드 집계
@@ -243,4 +204,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@://github.com"
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update dashboard" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: inspect raw fields" && git push)
