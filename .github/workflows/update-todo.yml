@@ -26,12 +26,13 @@ jobs:
             const username = context.repo.owner;
             const profileRepo = `${username}/${username}`.toLowerCase();
 
-            // 1. 개인(user) + 소속 조직(organization)의 모든 Projects V2 보드에서 항목 가져오기
+            // 1. 개인 + 소속 조직의 모든 Projects V2 보드 조회
             const query = `
               query {
                 viewer {
                   projectsV2(first: 10) {
                     nodes {
+                      title
                       items(first: 100) {
                         nodes {
                           fieldValueByName(name: "Status") {
@@ -61,6 +62,7 @@ jobs:
                     nodes {
                       projectsV2(first: 10) {
                         nodes {
+                          title
                           items(first: 100) {
                             nodes {
                               fieldValueByName(name: "Status") {
@@ -92,62 +94,74 @@ jobs:
               }
             `;
 
-            const projectRes = await github.graphql(query);
-            const userProjects = projectRes.viewer?.projectsV2?.nodes || [];
-            const orgProjects = (projectRes.viewer?.organizations?.nodes || [])
-              .flatMap(org => org.projectsV2?.nodes || []);
-            const allProjects = [...userProjects, ...orgProjects];
-
-            const targetStatuses = ['in progress', 'todo', 'backlog'];
-            const seenKeys = new Set();
-            const filteredTodos = [];
-
-            allProjects.forEach(proj => {
-              const items = proj.items?.nodes || [];
-              items.forEach(item => {
-                const content = item.content;
-                if (!content || !content.title) return;
-
-                if (content.url) {
-                  if (content.state !== 'OPEN') return;
-                  if (content.repository?.nameWithOwner?.toLowerCase() === profileRepo) return;
-                }
-
-                const uniqueKey = content.url || `draft:${content.title}`;
-                if (seenKeys.has(uniqueKey)) return;
-
-                const statusName = (item.fieldValueByName?.name || '').toLowerCase().trim();
-                if (targetStatuses.includes(statusName)) {
-                  seenKeys.add(uniqueKey);
-                  filteredTodos.push({
-                    title: content.title,
-                    url: content.url || '',
-                    repoName: content.repository?.name || 'Draft',
-                    status: statusName
-                  });
-                }
-              });
-            });
-
-            const getPriority = (status) => {
-              if (status === 'in progress') return 1;
-              if (status === 'todo') return 2;
-              return 3;
-            };
-
             let todoList = '';
-            if (filteredTodos.length === 0) {
-              todoList = '- 현재 할 일이 없습니다 🎉';
-            } else {
-              const sorted = filteredTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
-              todoList = sorted.map(task => {
-                let badge = '📦';
-                if (task.status === 'in progress') badge = '🚧';
-                else if (task.status === 'todo') badge = '📝';
+            try {
+              const projectRes = await github.graphql(query);
+              const userProjects = projectRes.viewer?.projectsV2?.nodes || [];
+              const orgProjects = (projectRes.viewer?.organizations?.nodes || [])
+                .flatMap(org => org.projectsV2?.nodes || []);
+              const allProjects = [...userProjects, ...orgProjects];
 
-                const linkText = task.url ? `[${task.title}](${task.url})` : task.title;
-                return `- ${badge} **[${task.repoName}]** ${linkText}`;
-              }).join('\n');
+              const seenKeys = new Set();
+              const filteredTodos = [];
+              const debugStatuses = [];
+
+              allProjects.forEach(proj => {
+                const items = proj.items?.nodes || [];
+                items.forEach(item => {
+                  const content = item.content;
+                  if (!content || !content.title) return;
+
+                  if (content.url) {
+                    if (content.state !== 'OPEN') return;
+                    if (content.repository?.nameWithOwner?.toLowerCase() === profileRepo) return;
+                  }
+
+                  const uniqueKey = content.url || `draft:${content.title}`;
+                  if (seenKeys.has(uniqueKey)) return;
+
+                  const rawStatus = (item.fieldValueByName?.name || '').toLowerCase();
+                  debugStatuses.push(`${content.title}(${rawStatus || '없음'})`);
+
+                  let matchedStatus = null;
+                  if (rawStatus.includes('in progress') || rawStatus.includes('inprogress')) matchedStatus = 'in progress';
+                  else if (rawStatus.includes('todo') || rawStatus.includes('to do')) matchedStatus = 'todo';
+                  else if (rawStatus.includes('backlog')) matchedStatus = 'backlog';
+
+                  if (matchedStatus) {
+                    seenKeys.add(uniqueKey);
+                    filteredTodos.push({
+                      title: content.title,
+                      url: content.url || '',
+                      repoName: content.repository?.name || 'Draft',
+                      status: matchedStatus
+                    });
+                  }
+                });
+              });
+
+              const getPriority = (status) => {
+                if (status === 'in progress') return 1;
+                if (status === 'todo') return 2;
+                return 3;
+              };
+
+              if (filteredTodos.length === 0) {
+                // 안 나올 때 원인 바로 확인용 메시지 출력
+                todoList = `- 조회된 프로젝트: 개인 ${userProjects.length}개 / 조직 ${orgProjects.length}개\n- 발견된 항목: ${debugStatuses.length > 0 ? debugStatuses.join(', ') : '없음'}`;
+              } else {
+                const sorted = filteredTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
+                todoList = sorted.map(task => {
+                  let badge = '📦';
+                  if (task.status === 'in progress') badge = '🚧';
+                  else if (task.status === 'todo') badge = '📝';
+
+                  const linkText = task.url ? `[${task.title}](${task.url})` : task.title;
+                  return `- ${badge} **[${task.repoName}]** ${linkText}`;
+                }).join('\n');
+              }
+            } catch (err) {
+              todoList = `- 토큰/권한 에러: ${err.message}`;
             }
 
             // 2. 프로필 저장소(birdf00t/birdf00t) 논문 목록 & 키워드 집계
@@ -166,7 +180,6 @@ jobs:
               return !names.includes('backlog');
             });
 
-            // 2-1. 본문에서 Keywords 추출 및 상위 10개 정렬
             const keywordCounts = {};
             activePapers.forEach(issue => {
               if (!issue.body) return;
@@ -192,14 +205,12 @@ jobs:
               ? `- 🏷️ ${topKeywords.join(', ')}`
               : `- 🏷️ 아직 등록된 키워드가 없습니다`;
 
-            // 2-2. 완료 / 읽는 중 카운트 뱃지 및 목록 생성
             const isPaperDone = (issue) => {
               const names = issue.labels.map(l => l.name.toLowerCase().trim());
               return issue.state === 'closed' || names.includes('done');
             };
 
             const doneCount = activePapers.filter(isPaperDone).length;
-            const readingCount = activePapers.length - doneCount;
 
             let paperList = '';
             if (activePapers.length === 0) {
@@ -211,7 +222,7 @@ jobs:
                 if (aDone === bDone) return 0;
                 return aDone ? 1 : -1;
               });
-              
+
               const summaryLine = '`Total Completed: ' + doneCount + ' papers`\n';
               const itemsText = sortedPapers.slice(0, 15).map(issue => {
                 const done = isPaperDone(issue);
@@ -244,4 +255,3 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@://github.com"
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update dashboard" && git push)
