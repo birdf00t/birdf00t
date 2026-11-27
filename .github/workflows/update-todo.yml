@@ -1,3 +1,69 @@
+name: Update Overview Dashboard
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+      - labeled
+      - unlabeled
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch tasks, papers, and keywords, then update README
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const username = context.repo.owner;
+            const profileRepo = `${username}/${username}`.toLowerCase();
+
+            // 1. birdf00t 계정이 작성한 모든 Open 이슈 검색
+            const { data: searchRes } = await github.rest.search.issuesAndPullRequests({
+              q: `author:${username} is:issue is:open`,
+              sort: 'updated',
+              order: 'desc',
+              per_page: 50
+            });
+
+            const rawTodos = searchRes.items.filter(issue => {
+              const repoFullName = issue.repository_url.split('/repos/').pop().toLowerCase();
+              if (repoFullName === profileRepo) return false;
+
+              const names = issue.labels.map(l => l.name.toLowerCase().trim());
+              if (names.includes('review') || names.includes('done')) return false;
+
+              return true;
+            });
+
+            // 1-1. 각 이슈의 Labels 또는 연결된 GitHub Projects의 모든 필드에서 상태 조회
+            const enrichedTodos = [];
+            for (const issue of rawTodos) {
+              const repoName = issue.repository_url.split('/').pop();
+              const labelNames = issue.labels.map(l => l.name.toLowerCase().trim());
+              let status = '';
+
+              // 먼저 이슈 라벨에서 상태 확인
+              if (labelNames.some(n => n.includes('in progress') || n.includes('inprogress'))) status = 'in progress';
+              else if (labelNames.some(n => n.includes('todo') || n.includes('to do'))) status = 'todo';
+              else if (labelNames.some(n => n.includes('backlog'))) status = 'backlog';
+
               // 라벨에 없으면 연결된 GitHub Projects 보드의 모든 선택(SingleSelect) 필드에서 상태 조회
               if (!status && issue.node_id) {
                 try {
@@ -51,3 +117,130 @@
                   console.log('Projects 조회 에러:', e.message);
                 }
               }
+
+              // Projects 보드에서 Review나 Done 컬럼에 있는 이슈는 제외
+              if (status === 'excluded') continue;
+
+              enrichedTodos.push({
+                title: issue.title,
+                url: issue.html_url,
+                repoName,
+                status
+              });
+            }
+
+            const getPriority = (status) => {
+              if (status === 'in progress') return 1;
+              if (status === 'todo') return 2;
+              if (status === 'backlog') return 3;
+              return 4;
+            };
+
+            let todoList = '';
+            if (enrichedTodos.length === 0) {
+              todoList = '- No open tasks 🎉';
+            } else {
+              const sorted = enrichedTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
+              todoList = sorted.map(task => {
+                let badge = '📌';
+                if (task.status === 'in progress') badge = '🚧';
+                else if (task.status === 'todo') badge = '📝';
+                else if (task.status === 'backlog') badge = '📦';
+
+                return `- ${badge} **[${task.repoName}]** [${task.title}](${task.url})`;
+              }).join('\n');
+            }
+
+            // 2. 프로필 저장소(birdf00t/birdf00t) 논문 목록 & 키워드 집계
+            const { data: paperIssues } = await github.rest.issues.listForRepo({
+              owner: username,
+              repo: username,
+              state: 'all',
+              sort: 'updated',
+              direction: 'desc',
+              per_page: 100
+            });
+
+            const activePapers = paperIssues.filter(issue => {
+              if (issue.pull_request) return false;
+              const names = issue.labels.map(l => l.name.toLowerCase().trim());
+              return !names.includes('backlog');
+            });
+
+            const keywordCounts = {};
+            activePapers.forEach(issue => {
+              if (!issue.body) return;
+              const match = issue.body.match(/\*\*Keywords\*\*\s*:\s*(.+)/i);
+              if (match && match[1]) {
+                match[1].split(',').forEach(raw => {
+                  const kw = raw.trim();
+                  if (kw) {
+                    const key = kw.toLowerCase();
+                    if (!keywordCounts[key]) keywordCounts[key] = { label: kw, count: 0 };
+                    keywordCounts[key].count += 1;
+                  }
+                });
+              }
+            });
+
+            const topKeywords = Object.values(keywordCounts)
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 10)
+              .map(item => `\`${item.label}\``);
+
+            const keywordLine = topKeywords.length > 0
+              ? `- 🏷️ ${topKeywords.join(', ')}`
+              : `- 🏷️ No keywords yet`;
+
+            const isPaperDone = (issue) => {
+              const names = issue.labels.map(l => l.name.toLowerCase().trim());
+              return issue.state === 'closed' || names.includes('done');
+            };
+
+            const doneCount = activePapers.filter(isPaperDone).length;
+
+            let paperList = '';
+            if (activePapers.length === 0) {
+              paperList = '- No papers logged yet 📚';
+            } else {
+              const sortedPapers = activePapers.sort((a, b) => {
+                const aDone = isPaperDone(a);
+                const bDone = isPaperDone(b);
+                if (aDone === bDone) return 0;
+                return aDone ? 1 : -1;
+              });
+
+              const unit = doneCount === 1 ? 'paper' : 'papers';
+              const summaryLine = '`Total Completed: ' + doneCount + ' ' + unit + '`\n';
+              const itemsText = sortedPapers.slice(0, 15).map(issue => {
+                const done = isPaperDone(issue);
+                const badge = done ? '✅' : '📖';
+                return `- ${badge} [${issue.title}](${issue.html_url})`;
+              }).join('\n');
+
+              paperList = `${summaryLine}\n${itemsText}`;
+            }
+
+            // 3. README.md 업데이트
+            let readme = fs.readFileSync('README.md', 'utf8');
+            readme = readme.replace(
+              /<!-- START_KEYWORDS -->[\s\S]*<!-- END_KEYWORDS -->/,
+              `<!-- START_KEYWORDS -->\n${keywordLine}\n<!-- END_KEYWORDS -->`
+            );
+            readme = readme.replace(
+              /<!-- START_TODO_ISSUES -->[\s\S]*<!-- END_TODO_ISSUES -->/,
+              `<!-- START_TODO_ISSUES -->\n${todoList}\n<!-- END_TODO_ISSUES -->`
+            );
+            readme = readme.replace(
+              /<!-- START_PAPERS -->[\s\S]*<!-- END_PAPERS -->/,
+              `<!-- START_PAPERS -->\n${paperList}\n<!-- END_PAPERS -->`
+            );
+
+            fs.writeFileSync('README.md', readme);
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@://github.com"
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update dashboard" && git push)
