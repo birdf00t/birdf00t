@@ -4,7 +4,7 @@ on:
   schedule:
     # 매시간 정각마다 자동 실행 (UTC 기준)
     - cron: '0 * * * *'
-  workflow_dispatch: # Actions 탭에서 수동으로도 즉시 실행 가능
+  workflow_dispatch: # GitHub Actions 탭에서 수동으로도 즉시 실행 가능
 
 permissions:
   contents: write
@@ -19,14 +19,14 @@ jobs:
       - name: Fetch open issues and update README
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.TODO_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const username = context.repo.owner;
 
-            // 본인 소유의 모든 저장소에서 Open 상태인 이슈 검색 (PR 제외)
+            // 본인 소유의 모든 Public 저장소에서 Open 상태인 이슈 검색 (PR 제외)
             const { data } = await github.rest.search.issuesAndPullRequests({
-              q: `user:${username} is:issue is:open`,
+              q: `user:${username} is:issue is:open is:public`,
               sort: 'updated',
               order: 'desc',
               per_page: 20
