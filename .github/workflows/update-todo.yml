@@ -212,7 +212,7 @@ jobs:
                 return aDone ? 1 : -1;
               });
 
-              const summaryLine = `![Completed](https://shields.io{doneCount}_papers-2ea44f?style=flat-square) ![Reading](https://shields.io{readingCount}_papers-0969da?style=flat-square)\n`;
+              const summaryLine = '![Completed](https://shields.io' + doneCount + '%20papers-2ea44f?style=flat-square) ![Reading](https://shields.io' + readingCount + '%20papers-0969da?style=flat-square)\n';
               const itemsText = sortedPapers.slice(0, 15).map(issue => {
                 const done = isPaperDone(issue);
                 const badge = done ? '✅' : '📖';
