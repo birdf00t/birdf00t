@@ -19,6 +19,6 @@
 
 ### 📌 Issues
 <!-- START_TODO_ISSUES -->
-- **[rPPG-anlasys #2]** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2) | state: `OPEN` | status: `상태 없음`
+- **[rPPG-anlasys #2]** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2) | state: `CLOSED` | status: `상태 없음`
 - **[rPPG-anlasys #1]** [MMPD 사전학습용 실행 파일](https://github.com/birdf00t/rPPG-anlasys/issues/1) | state: `OPEN` | status: `상태 없음`
 <!-- END_TODO_ISSUES -->
