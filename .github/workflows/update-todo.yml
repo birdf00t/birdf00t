@@ -192,7 +192,7 @@ jobs:
               ? `- 🏷️ ${topKeywords.join(', ')}`
               : `- 🏷️ 아직 등록된 키워드가 없습니다`;
 
-            // 2-2. 완료 / 읽는 중 카운트 및 목록 생성
+            // 2-2. 완료 / 읽는 중 카운트 뱃지 및 목록 생성
             const isPaperDone = (issue) => {
               const names = issue.labels.map(l => l.name.toLowerCase().trim());
               return issue.state === 'closed' || names.includes('done');
@@ -212,7 +212,7 @@ jobs:
                 return aDone ? 1 : -1;
               });
 
-              const summaryLine = `> 📊 **누적 완독: ${doneCount}편** · **현재 읽는 중: ${readingCount}편**\n`;
+              const summaryLine = `![Completed](https://shields.io{doneCount}_papers-2ea44f?style=flat-square) ![Reading](https://shields.io{readingCount}_papers-0969da?style=flat-square)\n`;
               const itemsText = sortedPapers.slice(0, 15).map(issue => {
                 const done = isPaperDone(issue);
                 const badge = done ? '✅' : '📖';
