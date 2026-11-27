@@ -9,7 +9,9 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-- 아직 등록된 논문 기록이 없습니다 📚
+> 📊 **누적 완독: 0편** · **현재 읽는 중: 1편**
+
+- [ ] 📖 `[Reading]` [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
 <!-- END_PAPERS -->
 
 ---
