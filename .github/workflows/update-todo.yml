@@ -25,7 +25,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Inspect raw issue and project fields
+      - name: Fetch raw issue data and print under README
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.PROJECT_TOKEN }}
@@ -54,10 +54,7 @@ jobs:
               const lines = [];
               for (const issue of rawTodos) {
                 const repoName = issue.repository_url.split('/').pop();
-                const labels = issue.labels.map(l => l.name).join(', ') || '없음';
-                const milestone = issue.milestone?.title || '없음';
-                const issueType = issue.type?.name || '없음';
-                let projectRaw = '조회안됨';
+                let rawDump = '';
 
                 if (issue.node_id) {
                   try {
@@ -65,11 +62,14 @@ jobs:
                       query($id: ID!) {
                         node(id: $id) {
                           ... on Issue {
-                            projectItems(first: 5) {
+                            state
+                            stateReason
+                            issueType { name }
+                            labels(first: 10) { nodes { name } }
+                            milestone { title }
+                            projectItems(first: 10) {
                               nodes {
-                                project {
-                                  title
-                                }
+                                project { title }
                                 fieldValues(first: 20) {
                                   nodes {
                                     ... on ProjectV2ItemFieldSingleSelectValue {
@@ -89,25 +89,13 @@ jobs:
                       }
                     `, { id: issue.node_id });
 
-                    const items = nodeRes.node?.projectItems?.nodes || [];
-                    if (items.length === 0) {
-                      projectRaw = '연결된 프로젝트 0개';
-                    } else {
-                      projectRaw = items.map(it => {
-                        const pTitle = it.project?.title || '무제';
-                        const vals = (it.fieldValues?.nodes || [])
-                          .filter(f => f && (f.name || f.text))
-                          .map(f => `${f.field?.name || '?'}=${f.name || f.text}`)
-                          .join(' | ');
-                        return `[${pTitle}: ${vals || '값없음'}]`;
-                      }).join(' / ');
-                    }
+                    rawDump = JSON.stringify(nodeRes.node);
                   } catch (e) {
-                    projectRaw = `에러(${e.message})`;
+                    rawDump = `에러: ${e.message}`;
                   }
                 }
 
-                lines.push(`- 📌 **[${repoName}]** [${issue.title}](${issue.html_url})\n  - \`Labels: ${labels}\` / \`Milestone: ${milestone}\` / \`Type: ${issueType}\` / \`Projects: ${projectRaw}\``);
+                lines.push(`- 📌 **[${repoName}]** [${issue.title}](${issue.html_url})\n  - \`${rawDump}\``);
               }
               todoList = lines.join('\n');
             }
@@ -204,4 +192,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@://github.com"
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: inspect raw fields" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: inspect raw issue json" && git push)
