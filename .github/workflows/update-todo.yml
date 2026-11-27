@@ -123,10 +123,8 @@ jobs:
                   else if (rawStatus.includes('backlog') || rawStatus.includes('백로그')) mappedStatus = 'backlog';
 
                   if (content.url) {
-                    // 정식 이슈인 경우 URL 기준으로 상태 매핑 저장
                     if (mappedStatus) statusMap.set(content.url, mappedStatus);
                   } else if (mappedStatus && mappedStatus !== 'excluded') {
-                    // 보드에만 있는 Draft 카드인 경우
                     draftTodos.push({
                       title: content.title,
                       url: '',
@@ -157,7 +155,6 @@ jobs:
               const labelNames = issue.labels.map(l => l.name.toLowerCase().trim());
               if (labelNames.includes('review') || labelNames.includes('done')) continue;
 
-              // GraphQL Projects 상태 우선 적용, 없으면 라벨 확인
               let status = statusMap.get(issue.html_url) || '';
               if (!status) {
                 if (labelNames.some(n => n.includes('in progress') || n.includes('inprogress'))) status = 'in progress';
@@ -218,8 +215,9 @@ jobs:
             activePapers.forEach(issue => {
               if (!issue.body) return;
               const match = issue.body.match(/\*\*Keywords\*\*\s*:\s*(.+)/i);
-              if (match && match[1]) {
-                match[1].split(',').forEach(raw => {
+              const rawKeywords = match ? match.at(1) : null;
+              if (rawKeywords) {
+                rawKeywords.split(',').forEach(raw => {
                   const kw = raw.trim();
                   if (kw) {
                     const key = kw.toLowerCase();
@@ -257,3 +255,4 @@ jobs:
                 return aDone ? 1 : -1;
               });
 
+              const unit = doneCount === 1 ? 'paper' : 'papers';
