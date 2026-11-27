@@ -1,13 +1,10 @@
 name: Update Overview Dashboard
 
 on:
-  # 1. 논문 이슈(birdf00t/birdf00t)가 생성, 수정, 닫힘, 다시 열림, 라벨 변경될 때마다 즉시 실행!
   issues:
     types: [opened, edited, closed, reopened, labeled, unlabeled]
-  # 2. 다른 저장소의 할 일(Task) 동기화를 위한 1시간 주기 백업
   schedule:
     - cron: '0 * * * *'
-  # 3. 수동 즉시 실행 버튼
   workflow_dispatch:
 
 permissions:
@@ -29,7 +26,7 @@ jobs:
             const username = context.repo.owner;
             const profileRepo = `${username}/${username}`.toLowerCase();
 
-            // 1. 일반 저장소 할 일(To-Do) 검색 (라벨이 없어도 Open 이슈면 모두 표시, Review/Done만 제외)
+            // 1. 일반 저장소 할 일(To-Do) 검색: In progress, Todo, Backlog 라벨만 포함 (나머지 제외)
             const { data: openData } = await github.rest.search.issuesAndPullRequests({
               q: `user:${username} is:issue is:open is:public`,
               sort: 'updated',
@@ -37,21 +34,22 @@ jobs:
               per_page: 100
             });
 
+            const targetLabels = ['in progress', 'todo', 'backlog'];
             const filteredTodos = openData.items.filter(issue => {
               const repoFullName = issue.repository_url.split('/repos/').pop().toLowerCase();
               if (repoFullName === profileRepo) return false;
 
               const names = issue.labels.map(l => l.name.toLowerCase().trim());
+              const hasTarget = names.some(n => targetLabels.includes(n));
               const hasExcluded = names.includes('review') || names.includes('done');
-              return !hasExcluded;
+              return hasTarget && !hasExcluded;
             });
 
             const getPriority = (issue) => {
               const names = issue.labels.map(l => l.name.toLowerCase().trim());
               if (names.includes('in progress')) return 1;
               if (names.includes('todo')) return 2;
-              if (names.includes('backlog')) return 3;
-              return 4;
+              return 3;
             };
 
             let todoList = '';
@@ -63,10 +61,9 @@ jobs:
                 const repoName = issue.repository_url.split('/').pop();
                 const labelNames = issue.labels.map(l => l.name.toLowerCase().trim());
 
-                let statusBadge = '📌';
-                if (labelNames.includes('in progress')) statusBadge = '🚧 `[In Progress]`';
-                else if (labelNames.includes('todo')) statusBadge = '📝 `[To-Do]`';
-                else if (labelNames.includes('backlog')) statusBadge = '📦 `[Backlog]`';
+                let statusBadge = '📦';
+                if (labelNames.includes('in progress')) statusBadge = '🚧';
+                else if (labelNames.includes('todo')) statusBadge = '📝';
 
                 return `- ${statusBadge} **[${repoName}]** [${issue.title}](${issue.html_url})`;
               }).join('\n');
@@ -88,7 +85,7 @@ jobs:
               return !names.includes('backlog');
             });
 
-            // 2-1. 본문에서 Keywords 추출 및 상위 10개 정렬
+            // 2-1. 본문에서 Keywords 추출 및 상위 10개 정렬 (이모티콘만 표시)
             const keywordCounts = {};
             activePapers.forEach(issue => {
               if (!issue.body) return;
@@ -111,10 +108,10 @@ jobs:
               .map(item => `\`${item.label}\``);
 
             const keywordLine = topKeywords.length > 0
-              ? `- 🏷️ **Keywords**: ${topKeywords.join(', ')}`
-              : `- 🏷️ **Keywords**: 아직 등록된 키워드가 없습니다`;
+              ? `- 🏷️ ${topKeywords.join(', ')}`
+              : `- 🏷️ 아직 등록된 키워드가 없습니다`;
 
-            // 2-2. 완료 / 읽는 중 카운트 및 목록 생성
+            // 2-2. 완료 / 읽는 중 카운트 및 목록 생성 (이모티콘만 표시)
             const isPaperDone = (issue) => {
               const names = issue.labels.map(l => l.name.toLowerCase().trim());
               return issue.state === 'closed' || names.includes('done');
@@ -137,7 +134,7 @@ jobs:
               const summaryLine = `> 📊 **누적 완독: ${doneCount}편** · **현재 읽는 중: ${readingCount}편**\n`;
               const itemsText = sortedPapers.slice(0, 15).map(issue => {
                 const done = isPaperDone(issue);
-                const badge = done ? '✅ `[Done]`' : '📖 `[Reading]`';
+                const badge = done ? '✅' : '📖';
                 return `- ${badge} [${issue.title}](${issue.html_url})`;
               }).join('\n');
 
