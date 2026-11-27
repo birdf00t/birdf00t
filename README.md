@@ -20,7 +20,7 @@
 ### 📌 Issues
 <!-- START_TODO_ISSUES -->
 - 📌 **[rPPG-anlasys]** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2)
-  - `Labels: enhancement` / `Milestone: 없음` / `Type: Task` / `Projects: 연결된 프로젝트 0개`
+  - `{"state":"OPEN","stateReason":null,"issueType":{"name":"Task"},"labels":{"nodes":[{"name":"enhancement"}]},"milestone":null,"projectItems":{"nodes":[]}}`
 - 📌 **[rPPG-anlasys]** [MMPD 사전학습용 실행 파일](https://github.com/birdf00t/rPPG-anlasys/issues/1)
-  - `Labels: enhancement` / `Milestone: 없음` / `Type: Task` / `Projects: 연결된 프로젝트 0개`
+  - `{"state":"OPEN","stateReason":null,"issueType":{"name":"Task"},"labels":{"nodes":[{"name":"enhancement"}]},"milestone":null,"projectItems":{"nodes":[]}}`
 <!-- END_TODO_ISSUES -->
