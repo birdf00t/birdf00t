@@ -9,22 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  # 1. 통계 카드 SVG 이미지 직접 생성 (외부 서버 장애 없음)
-  generate-stats:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Generate GitHub Stats SVG
-        uses: jstrieb/github-stats@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          EXCLUDED_LANGS: HTML,CSS,TeX
-
-  # 2. 논문, 키워드, 할 일(To-Do) 업데이트
   update-readme:
-    needs: generate-stats
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
