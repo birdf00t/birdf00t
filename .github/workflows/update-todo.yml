@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch Projects tasks, papers, and keywords, then update README
         uses: actions/github-script@v7
@@ -147,7 +149,6 @@ jobs:
               };
 
               if (filteredTodos.length === 0) {
-                // 안 나올 때 원인 바로 확인용 메시지 출력
                 todoList = `- 조회된 프로젝트: 개인 ${userProjects.length}개 / 조직 ${orgProjects.length}개\n- 발견된 항목: ${debugStatuses.length > 0 ? debugStatuses.join(', ') : '없음'}`;
               } else {
                 const sorted = filteredTodos.sort((a, b) => getPriority(a.status) - getPriority(b.status));
