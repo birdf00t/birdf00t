@@ -6,7 +6,7 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-![Completed](https://shields.io1%20papers-2ea44f?style=flat-square) ![Reading](https://shields.io0%20papers-0969da?style=flat-square)
+`Total Completed: 1 papers`
 
 - ✅ [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
 <!-- END_PAPERS -->
