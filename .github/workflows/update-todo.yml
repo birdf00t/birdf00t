@@ -2,7 +2,13 @@ name: Update Overview Dashboard
 
 on:
   issues:
-    types: [opened, edited, closed, reopened, labeled, unlabeled]
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+      - labeled
+      - unlabeled
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
@@ -34,6 +40,7 @@ jobs:
                 viewer {
                   projectsV2(first: 10) {
                     nodes {
+                      title
                       items(first: 100) {
                         nodes {
                           fieldValueByName(name: "Status") {
@@ -63,6 +70,7 @@ jobs:
                     nodes {
                       projectsV2(first: 10) {
                         nodes {
+                          title
                           items(first: 100) {
                             nodes {
                               fieldValueByName(name: "Status") {
@@ -253,4 +261,3 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@://github.com"
-          git add README.md
