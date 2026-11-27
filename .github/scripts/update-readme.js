@@ -97,9 +97,9 @@ module.exports = async ({ github, context }) => {
     console.log('Projects 조회 에러:', e.message);
   }
 
-  // 1-2. 보드에 안 올라간 일반 공개 저장소 Open 이슈도 함께 포함
+  // 1-2. ://github.com 화면처럼 나와 관련된 모든 공개 저장소 Open 이슈 함께 포함
   const { data: searchRes } = await github.rest.search.issuesAndPullRequests({
-    q: 'user:' + username + ' is:issue is:open is:public',
+    q: 'involves:' + username + ' is:issue is:open is:public',
     sort: 'updated',
     order: 'desc',
     per_page: 50
@@ -131,7 +131,7 @@ module.exports = async ({ github, context }) => {
     }).join('\n');
   }
 
-  // 2. 프로필 저장소 논문 목록 & 키워드 집계
+  // 2. 프로필 저장소(birdf00t/birdf00t) 논문 목록 & 키워드 집계
   const { data: paperIssues } = await github.rest.issues.listForRepo({
     owner: username,
     repo: username,
