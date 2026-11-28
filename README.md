@@ -6,9 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 11 papers`
+`Total Completed: 12 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+-  [A Review of State of the Art Deep Learning Models for Ontology Construction](https://github.com/birdf00t/birdf00t/issues/13)
 -  [Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
 -  [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
 -  [Huxley-Gödel Machine: Human-Level Coding Agent Development by an Approximation of the Optimal Self-Improving Machine](https://github.com/birdf00t/birdf00t/issues/12)
@@ -23,13 +24,13 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Chrominance-Based Method`, `Motion Robustness`, `Blood Volume Pulse`, `Skin Reflection Model`, `Agentic Systems`
+- 🏷️ `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `: Ontology Learning`, `Ontology Construction`, `Term Extraction`, `Relation Extraction`, `Axiom Learning`
 <!-- END_KEYWORDS -->
 
 ---
 
 ### 🚧 Issues
 <!-- START_TODO_ISSUES -->
-- **<rPPG-anlasys>** [MMPD 사전학습용 실행 파일](https://github.com/birdf00t/rPPG-anlasys/issues/1)
-- **<rPPG-anlasys>** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2)
+- **[rPPG-anlasys]** [MMPD 사전학습용 실행 파일](https://github.com/birdf00t/rPPG-anlasys/issues/1)
+- **[rPPG-anlasys]** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2)
 <!-- END_TODO_ISSUES -->
