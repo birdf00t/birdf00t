@@ -6,10 +6,11 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 9 papers`
+`Total Completed: 10 papers`
 
 - 📖 [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+- ✅ [Huxley-Gödel Machine: Human-Level Coding Agent Development by an Approximation of the Optimal Self-Improving Machine](https://github.com/birdf00t/birdf00t/issues/12)
 - ✅ [Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents](https://github.com/birdf00t/birdf00t/issues/11)
 - ✅ [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
 - ✅ [• Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
@@ -22,7 +23,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Remote Photoplethysmography (rPPG)`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Self-Improving AI`, `Open-Endedness`, `Gödel Machine`, `Darwinian Evolution`, `Self-Referential Code Modification`, `Agentic Systems`
+- 🏷️ `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Self-Improving Coding Agents`, `Clade-Metaproductivity (CMP)`, `Tree Search`, `Metaproductivity-Performance Mismatch`, `Self-Improving AI`
 <!-- END_KEYWORDS -->
 
 ---
