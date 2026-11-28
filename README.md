@@ -4,6 +4,14 @@
 
 ---
 
+### 🚧 Issues
+<!-- START_TODO_ISSUES -->
+- **[rPPG-anlasys]** [MMPD 사전학습용 실행 파일](https://github.com/birdf00t/rPPG-anlasys/issues/1)
+- **[rPPG-anlasys]** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2)
+<!-- END_TODO_ISSUES -->
+
+---
+
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
 `Total Completed: 17 papers`
@@ -29,10 +37,3 @@
 - 🏷️ `Large Language Models (LLMs)`, `Knowledge Graphs`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Benchmark`, `Relational Databases (RDB)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `: Text-to-SQL`
 <!-- END_KEYWORDS -->
 
----
-
-### 🚧 Issues
-<!-- START_TODO_ISSUES -->
-- **[rPPG-anlasys]** [MMPD 사전학습용 실행 파일](https://github.com/birdf00t/rPPG-anlasys/issues/1)
-- **[rPPG-anlasys]** [FPS, RES 전처리 실험 실행할 때 하도록 수정](https://github.com/birdf00t/rPPG-anlasys/issues/2)
-<!-- END_TODO_ISSUES -->
