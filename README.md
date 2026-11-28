@@ -8,6 +8,7 @@
 <!-- START_PAPERS -->
 `Total Completed: 16 papers`
 
+- 📖 [Spider 2.0: Evaluating Language Models on Real-World Enterprise Text-to-SQL Workflows](https://github.com/birdf00t/birdf00t/issues/18)
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
 -  [A Benchmark to Understand the Role of Knowledge Graphs on Large Language Model's Accuracy for Question Answering on Enterprise SQL Databases](https://github.com/birdf00t/birdf00t/issues/17)
 -  [Burr: A Benchmark for Ontology Learning from Relational Databases](https://github.com/birdf00t/birdf00t/issues/16)
@@ -22,11 +23,10 @@
 -  [Remote plethysmographic imaging using ambient lig](https://github.com/birdf00t/birdf00t/issues/7)
 -  [A Path Towards Autonomous Machine Intelligence](https://github.com/birdf00t/birdf00t/issues/6)
 -  [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
--  [V-JEPA 2: Self-Supervised Video Models](https://github.com/birdf00t/birdf00t/issues/4)
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Large Language Models (LLMs)`, `Knowledge Graphs`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Benchmark`, `Relational Databases (RDB)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `Question Answering`
+- 🏷️ `Large Language Models (LLMs)`, `Knowledge Graphs`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Benchmark`, `Relational Databases (RDB)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `: Text-to-SQL`
 <!-- END_KEYWORDS -->
 
 ---
