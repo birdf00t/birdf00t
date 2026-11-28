@@ -10,7 +10,7 @@ assignees: 'birdf00t'
 - **저널 / 학회**: 
 - **Year**: 
 - **Keywords**: 
-- **arXiv / doi**: 
+- **Link**: 
 
 ### 💡 한 줄 요약 & 메모
 - 
