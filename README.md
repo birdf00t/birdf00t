@@ -6,14 +6,15 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 1 paper`
+`Total Completed: 2 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+- ✅ [Revisiting Feature Prediction for Learning Visual Representations from Video](https://github.com/birdf00t/birdf00t/issues/3)
 - ✅ [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `deep learning`, `vision`, `convolutional neural networks`, `image classification`, `ImageNet`, `neural networks`, `regularization`, `model combination`
+- 🏷️ `deep learning`, `Self-Supervised Learning`, `Video Representation Learning`, `Joint-Embedding Predictive Architecture`, `Feature Prediction`, `Masked Modeling`, `vision`, `convolutional neural networks`, `image classification`, `ImageNet`
 <!-- END_KEYWORDS -->
 
 ---
