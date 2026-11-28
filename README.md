@@ -9,11 +9,11 @@
 `Total Completed: 11 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+-  [Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
 -  [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
 -  [Huxley-Gödel Machine: Human-Level Coding Agent Development by an Approximation of the Optimal Self-Improving Machine](https://github.com/birdf00t/birdf00t/issues/12)
 -  [Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents](https://github.com/birdf00t/birdf00t/issues/11)
 -  [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
--  [• Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
 -  [Remote plethysmographic imaging using ambient lig](https://github.com/birdf00t/birdf00t/issues/7)
 -  [A Path Towards Autonomous Machine Intelligence](https://github.com/birdf00t/birdf00t/issues/6)
 -  [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
@@ -23,7 +23,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Agentic Systems`, `Automated Design`, `Meta Agent Search`, `Foundation Models`, `Code-Level Agent Generation`
+- 🏷️ `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Chrominance-Based Method`, `Motion Robustness`, `Blood Volume Pulse`, `Skin Reflection Model`, `Agentic Systems`
 <!-- END_KEYWORDS -->
 
 ---
