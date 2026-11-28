@@ -6,9 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 15 papers`
+`Total Completed: 16 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+-  [A Benchmark to Understand the Role of Knowledge Graphs on Large Language Model's Accuracy for Question Answering on Enterprise SQL Databases](https://github.com/birdf00t/birdf00t/issues/17)
 -  [Burr: A Benchmark for Ontology Learning from Relational Databases](https://github.com/birdf00t/birdf00t/issues/16)
 -  [Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale Database Grounded Text-to-SQLs](https://github.com/birdf00t/birdf00t/issues/15)
 -  [Retrieval-Augmented Generation of Ontologies from Relational Databases](https://github.com/birdf00t/birdf00t/issues/14)
@@ -22,11 +23,10 @@
 -  [A Path Towards Autonomous Machine Intelligence](https://github.com/birdf00t/birdf00t/issues/6)
 -  [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
 -  [V-JEPA 2: Self-Supervised Video Models](https://github.com/birdf00t/birdf00t/issues/4)
--  [Revisiting Feature Prediction for Learning Visual Representations from Video](https://github.com/birdf00t/birdf00t/issues/3)
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Large Language Models (LLMs)`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Relational Databases (RDB)`, `Knowledge Graphs`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `Ontology Learning`, `Benchmark`
+- 🏷️ `Large Language Models (LLMs)`, `Knowledge Graphs`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Benchmark`, `Relational Databases (RDB)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `Question Answering`
 <!-- END_KEYWORDS -->
 
 ---
