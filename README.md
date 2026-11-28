@@ -8,11 +8,12 @@
 <!-- START_PAPERS -->
 `Total Completed: 1 paper`
 
+- 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
 - ✅ [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `vision`, `deep learning`, `convolutional neural networks (CNN)`, `image classification`, `ImageNet`
+- 🏷️ `deep learning`, `neural networks`, `regularization`, `model combination`, `vision`, `convolutional neural networks (CNN)`, `image classification`, `ImageNet`
 <!-- END_KEYWORDS -->
 
 ---
