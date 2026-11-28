@@ -6,10 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 10 papers`
+`Total Completed: 11 papers`
 
-- 📖 [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+- ✅ [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
 - ✅ [Huxley-Gödel Machine: Human-Level Coding Agent Development by an Approximation of the Optimal Self-Improving Machine](https://github.com/birdf00t/birdf00t/issues/12)
 - ✅ [Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents](https://github.com/birdf00t/birdf00t/issues/11)
 - ✅ [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
@@ -23,7 +23,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Self-Improving Coding Agents`, `Clade-Metaproductivity (CMP)`, `Tree Search`, `Metaproductivity-Performance Mismatch`, `Self-Improving AI`
+- 🏷️ `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Agentic Systems`, `Automated Design`, `Meta Agent Search`, `Foundation Models`, `Code-Level Agent Generation`
 <!-- END_KEYWORDS -->
 
 ---
