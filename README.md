@@ -6,9 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 6 papers`
+`Total Completed: 7 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+- ✅ [• Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
 - ✅ [Remote plethysmographic imaging using ambient lig](https://github.com/birdf00t/birdf00t/issues/7)
 - ✅ [A Path Towards Autonomous Machine Intelligence](https://github.com/birdf00t/birdf00t/issues/6)
 - ✅ [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
@@ -18,7 +19,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `World Models`, `Self-Supervised Learning`, `deep learning`, `Remote Photoplethysmography (rPPG)`, `Ambient Light`, `Green Channel`, `Hemoglobin Absorption`, `Non-Contact Vital Signs`, `Autonomous Intelligence`, `Joint-Embedding Predictive Architecture (JEPA)`
+- 🏷️ `Remote Photoplethysmography (rPPG)`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Chrominance-Based Method`, `Motion Robustness`, `Blood Volume Pulse`, `Skin Reflection Model`, `Ambient Light`, `Green Channel`
 <!-- END_KEYWORDS -->
 
 ---
