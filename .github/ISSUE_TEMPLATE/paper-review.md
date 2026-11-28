@@ -11,6 +11,3 @@ assignees: 'birdf00t'
 - **Year**: 
 - **Keywords**: 
 - **Link**: 
-
-### 💡 한 줄 요약 & 메모
-- 
