@@ -8,6 +8,7 @@
 <!-- START_PAPERS -->
 `Total Completed: 8 papers`
 
+- 📖 [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
 - ✅ [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
 - ✅ [• Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
@@ -20,7 +21,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Remote Photoplethysmography (rPPG)`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Plane-Orthogonal-to-Skin (POS)`, `Skin-Tone Orthogonal Projection`, `Optical & Physiological Skin Model`, `Pulse Extraction`, `Chrominance-Based Method`, `Motion Robustness`
+- 🏷️ `Remote Photoplethysmography (rPPG)`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Agentic Systems`, `Automated Design`, `Meta Agent Search`, `Foundation Models`, `Code-Level Agent Generation`, `Plane-Orthogonal-to-Skin (POS)`
 <!-- END_KEYWORDS -->
 
 ---
