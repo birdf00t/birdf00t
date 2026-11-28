@@ -6,9 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 12 papers`
+`Total Completed: 13 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+-  [Retrieval-Augmented Generation of Ontologies from Relational Databases](https://github.com/birdf00t/birdf00t/issues/14)
 -  [A Review of State of the Art Deep Learning Models for Ontology Construction](https://github.com/birdf00t/birdf00t/issues/13)
 -  [Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
 -  [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
@@ -24,7 +25,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `: Ontology Learning`, `Ontology Construction`, `Term Extraction`, `Relation Extraction`, `Axiom Learning`
+- 🏷️ `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Large Language Models (LLMs)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `Ontology Generation`, `Retrieval-Augmented Generation (RAG)`, `Relational Databases (RDB)`, `OWL2DL`
 <!-- END_KEYWORDS -->
 
 ---
