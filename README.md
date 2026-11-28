@@ -6,9 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 13 papers`
+`Total Completed: 14 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+-  [Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale Database Grounded Text-to-SQLs](https://github.com/birdf00t/birdf00t/issues/15)
 -  [Retrieval-Augmented Generation of Ontologies from Relational Databases](https://github.com/birdf00t/birdf00t/issues/14)
 -  [A Review of State of the Art Deep Learning Models for Ontology Construction](https://github.com/birdf00t/birdf00t/issues/13)
 -  [Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
@@ -25,7 +26,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Large Language Models (LLMs)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `Ontology Generation`, `Retrieval-Augmented Generation (RAG)`, `Relational Databases (RDB)`, `OWL2DL`
+- 🏷️ `Large Language Models (LLMs)`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `Text-to-SQL`, `BIRD Benchmark`, `Database Grounding`, `SQL Efficiency`
 <!-- END_KEYWORDS -->
 
 ---
