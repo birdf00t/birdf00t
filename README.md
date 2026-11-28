@@ -9,17 +9,17 @@
 `Total Completed: 11 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
-- ✅ [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
-- ✅ [Huxley-Gödel Machine: Human-Level Coding Agent Development by an Approximation of the Optimal Self-Improving Machine](https://github.com/birdf00t/birdf00t/issues/12)
-- ✅ [Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents](https://github.com/birdf00t/birdf00t/issues/11)
-- ✅ [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
-- ✅ [• Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
-- ✅ [Remote plethysmographic imaging using ambient lig](https://github.com/birdf00t/birdf00t/issues/7)
-- ✅ [A Path Towards Autonomous Machine Intelligence](https://github.com/birdf00t/birdf00t/issues/6)
-- ✅ [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
-- ✅ [V-JEPA 2: Self-Supervised Video Models](https://github.com/birdf00t/birdf00t/issues/4)
-- ✅ [Revisiting Feature Prediction for Learning Visual Representations from Video](https://github.com/birdf00t/birdf00t/issues/3)
-- ✅ [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
+-  [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
+-  [Huxley-Gödel Machine: Human-Level Coding Agent Development by an Approximation of the Optimal Self-Improving Machine](https://github.com/birdf00t/birdf00t/issues/12)
+-  [Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents](https://github.com/birdf00t/birdf00t/issues/11)
+-  [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
+-  [• Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
+-  [Remote plethysmographic imaging using ambient lig](https://github.com/birdf00t/birdf00t/issues/7)
+-  [A Path Towards Autonomous Machine Intelligence](https://github.com/birdf00t/birdf00t/issues/6)
+-  [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
+-  [V-JEPA 2: Self-Supervised Video Models](https://github.com/birdf00t/birdf00t/issues/4)
+-  [Revisiting Feature Prediction for Learning Visual Representations from Video](https://github.com/birdf00t/birdf00t/issues/3)
+-  [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
