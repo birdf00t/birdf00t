@@ -6,16 +6,17 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 3 papers`
+`Total Completed: 4 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+- ✅ [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
 - ✅ [V-JEPA 2: Self-Supervised Video Models](https://github.com/birdf00t/birdf00t/issues/4)
 - ✅ [Revisiting Feature Prediction for Learning Visual Representations from Video](https://github.com/birdf00t/birdf00t/issues/3)
 - ✅ [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `deep learning`, `World Models`, `Video SSL`, `Action Anticipation`, `Robot Planning`, `Physical Reasoning`, `Self-Supervised Learning`, `Video Representation Learning`, `Joint-Embedding Predictive Architecture`, `Feature Prediction`
+- 🏷️ `deep learning`, `• Dense Visual Representations`, `Deep Self-Supervision`, `Multi-Modal Tokenizers`, `Spatial-Temporal Grounding`, `World Models`, `Video SSL`, `Action Anticipation`, `Robot Planning`, `Physical Reasoning`
 <!-- END_KEYWORDS -->
 
 ---
