@@ -34,6 +34,6 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Large Language Models (LLMs)`, `Knowledge Graphs`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Benchmark`, `Relational Databases (RDB)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `: Text-to-SQL`
+- 🏷️ `Large Language Models (LLMs)`, `deep learning`, `Knowledge Graphs`, `Remote Photoplethysmography (rPPG)`, `Benchmark`, `Relational Databases (RDB)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `neural networks`
 <!-- END_KEYWORDS -->
 
