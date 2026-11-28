@@ -6,9 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 5 papers`
+`Total Completed: 6 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+- ✅ [Remote plethysmographic imaging using ambient lig](https://github.com/birdf00t/birdf00t/issues/7)
 - ✅ [A Path Towards Autonomous Machine Intelligence](https://github.com/birdf00t/birdf00t/issues/6)
 - ✅ [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
 - ✅ [V-JEPA 2: Self-Supervised Video Models](https://github.com/birdf00t/birdf00t/issues/4)
@@ -17,7 +18,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `World Models`, `Self-Supervised Learning`, `deep learning`, `Autonomous Intelligence`, `Joint-Embedding Predictive Architecture (JEPA)`, `Hierarchical JEPA (H-JEPA)`, `Energy-Based Models (EBM)`, `Intrinsic Motivation`, `• Dense Visual Representations`, `Deep Self-Supervision`
+- 🏷️ `World Models`, `Self-Supervised Learning`, `deep learning`, `Remote Photoplethysmography (rPPG)`, `Ambient Light`, `Green Channel`, `Hemoglobin Absorption`, `Non-Contact Vital Signs`, `Autonomous Intelligence`, `Joint-Embedding Predictive Architecture (JEPA)`
 <!-- END_KEYWORDS -->
 
 ---
