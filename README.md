@@ -13,7 +13,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `deep learning`, `neural networks`, `regularization`, `model combination`, `vision`, `convolutional neural networks (CNN)`, `image classification`, `ImageNet`
+- 🏷️ `deep learning`, `vision`, `convolutional neural networks`, `image classification`, `ImageNet`, `neural networks`, `regularization`, `model combination`
 <!-- END_KEYWORDS -->
 
 ---
