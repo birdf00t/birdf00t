@@ -89,7 +89,7 @@ module.exports = async ({ github, context }) => {
     const summaryLine = tick + 'Total Completed: ' + doneCount + ' ' + unit + tick + '\n';
     const itemsText = sortedPapers.slice(0, 15).map(issue => {
       const done = isPaperDone(issue);
-      const badge = done ? '✅' : '📖';
+      const badge = done ? '' : '📖';
       return '- ' + badge + ' [' + issue.title + '](' + issue.html_url + ')';
     }).join('\n');
 
