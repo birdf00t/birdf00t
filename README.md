@@ -6,10 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 7 papers`
+`Total Completed: 8 papers`
 
-- 📖 [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+- ✅ [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
 - ✅ [• Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
 - ✅ [Remote plethysmographic imaging using ambient lig](https://github.com/birdf00t/birdf00t/issues/7)
 - ✅ [A Path Towards Autonomous Machine Intelligence](https://github.com/birdf00t/birdf00t/issues/6)
