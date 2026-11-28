@@ -6,10 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 16 papers`
+`Total Completed: 17 papers`
 
-- 📖 [Spider 2.0: Evaluating Language Models on Real-World Enterprise Text-to-SQL Workflows](https://github.com/birdf00t/birdf00t/issues/18)
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+-  [Spider 2.0: Evaluating Language Models on Real-World Enterprise Text-to-SQL Workflows](https://github.com/birdf00t/birdf00t/issues/18)
 -  [A Benchmark to Understand the Role of Knowledge Graphs on Large Language Model's Accuracy for Question Answering on Enterprise SQL Databases](https://github.com/birdf00t/birdf00t/issues/17)
 -  [Burr: A Benchmark for Ontology Learning from Relational Databases](https://github.com/birdf00t/birdf00t/issues/16)
 -  [Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale Database Grounded Text-to-SQLs](https://github.com/birdf00t/birdf00t/issues/15)
