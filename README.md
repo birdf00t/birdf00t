@@ -6,9 +6,10 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 14 papers`
+`Total Completed: 15 papers`
 
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+-  [Burr: A Benchmark for Ontology Learning from Relational Databases](https://github.com/birdf00t/birdf00t/issues/16)
 -  [Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale Database Grounded Text-to-SQLs](https://github.com/birdf00t/birdf00t/issues/15)
 -  [Retrieval-Augmented Generation of Ontologies from Relational Databases](https://github.com/birdf00t/birdf00t/issues/14)
 -  [A Review of State of the Art Deep Learning Models for Ontology Construction](https://github.com/birdf00t/birdf00t/issues/13)
@@ -22,11 +23,10 @@
 -  [V-JEPA 2.1: Unlocking Dense Features](https://github.com/birdf00t/birdf00t/issues/5)
 -  [V-JEPA 2: Self-Supervised Video Models](https://github.com/birdf00t/birdf00t/issues/4)
 -  [Revisiting Feature Prediction for Learning Visual Representations from Video](https://github.com/birdf00t/birdf00t/issues/3)
--  [ImageNet Classification with Deep Convolutional Neural Networks](https://github.com/birdf00t/birdf00t/issues/1)
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Large Language Models (LLMs)`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `Text-to-SQL`, `BIRD Benchmark`, `Database Grounding`, `SQL Efficiency`
+- 🏷️ `Large Language Models (LLMs)`, `Deep Learning`, `Remote Photoplethysmography (rPPG)`, `Relational Databases (RDB)`, `Knowledge Graphs`, `Gödel Machine`, `World Models`, `Self-Supervised Learning`, `Ontology Learning`, `Benchmark`
 <!-- END_KEYWORDS -->
 
 ---
