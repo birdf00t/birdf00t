@@ -29,7 +29,7 @@ module.exports = async ({ github, context }) => {
     todoList = '- No open tasks 🎉';
   } else {
     todoList = todos.map(t => {
-      return '- **[' + t.repoName + ']** [' + t.title + '](' + t.url + ')';
+      return '- **<' + t.repoName + '>** [' + t.title + '](' + t.url + ')';
     }).join('\n');
   }
 
