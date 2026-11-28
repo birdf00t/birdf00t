@@ -6,10 +6,11 @@
 
 ### 📚 Paper Reading Log
 <!-- START_PAPERS -->
-`Total Completed: 8 papers`
+`Total Completed: 9 papers`
 
 - 📖 [Automated Design of Agentic Systems](https://github.com/birdf00t/birdf00t/issues/10)
 - 📖 [Dropout: A Simple Way to Prevent Neural Networks from Overfitting](https://github.com/birdf00t/birdf00t/issues/2)
+- ✅ [Darwin Gödel Machine: Open-Ended Evolution of Self-Improving Agents](https://github.com/birdf00t/birdf00t/issues/11)
 - ✅ [Algorithmic Principles of Remote PPG](https://github.com/birdf00t/birdf00t/issues/9)
 - ✅ [• Robust Pulse Rate From Chrominance-Based rPPG](https://github.com/birdf00t/birdf00t/issues/8)
 - ✅ [Remote plethysmographic imaging using ambient lig](https://github.com/birdf00t/birdf00t/issues/7)
@@ -21,7 +22,7 @@
 <!-- END_PAPERS -->
 
 <!-- START_KEYWORDS -->
-- 🏷️ `Remote Photoplethysmography (rPPG)`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Agentic Systems`, `Automated Design`, `Meta Agent Search`, `Foundation Models`, `Code-Level Agent Generation`, `Plane-Orthogonal-to-Skin (POS)`
+- 🏷️ `Remote Photoplethysmography (rPPG)`, `World Models`, `Self-Supervised Learning`, `deep learning`, `Self-Improving AI`, `Open-Endedness`, `Gödel Machine`, `Darwinian Evolution`, `Self-Referential Code Modification`, `Agentic Systems`
 <!-- END_KEYWORDS -->
 
 ---
